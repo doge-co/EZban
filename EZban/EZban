@@ -3,9 +3,17 @@ local MS = game:GetService("MessagingService")
 local chnl = "UserBanned"
 local store = DS:GetDataStore("BanInfo")
 local store2 = DS:GetDataStore("TimeBanInfo")
+local store3 = DS:GetDataStore("Unbannable")
 local bob = script.Cage:Clone()
 local Timenow = os.time()
-  if not workspace:FindFirstChild("Cage") then
+local unbannable = {}
+local su,er = pcall(function()
+	unbannable = store3:GetAsync("Users")
+	if unbannable == nil then
+		unbannable = {}
+	end
+end)
+if not workspace:FindFirstChild("Cage") then
 	bob.Parent = workspace
 else
 	bob:Destroy()
@@ -39,32 +47,36 @@ plrs.PlayerAdded:Connect(function(plr)
 		data2 = store2:GetAsync(plr.UserId)
 	end)
 	if s then
-		if data[3] ~= nil then
-			if data[2] ~= nil then
-				local caged = data[2]
-				if caged then
-					coroutine.resume(z,plr)
-				else
-					plr:Kick("You were banned from this game.")
+		if data ~= nil then
+			if data[3] ~= nil then
+				if data[2] ~= nil then
+					local caged = data[2]
+					if caged then
+						coroutine.resume(z,plr)
+					else
+						plr:Kick("You were banned from this game.")
+					end
 				end
 			end
 		end
-		if data2[3] ~= nil then
-			local Mode = data2[2]
-			local TLIS = os.difftime(data2[1],Timenow)
-			local timeleft = 0
-			local finaltime = nil
-			if TLIS > 0 then
-				if Mode == "minutes" then timeleft = TLIS/60	elseif Mode == "hours" then timeleft = TLIS/3600	elseif Mode == "days" then timeleft = TLIS/86400	elseif Mode == "weeks" then timeleft = TLIS/604800 end
-				print(timeleft)
-				if timeleft > 1 then
-					finaltime = round(timeleft)
-				end
+		if data2 ~= nil then
+			if data2[3] ~= nil then
+				local Mode = data2[2]
+				local TLIS = os.difftime(data2[1],Timenow)
+				local timeleft = 0
+				local finaltime = nil
+				if TLIS > 0 then
+					if Mode == "minutes" then timeleft = TLIS/60	elseif Mode == "hours" then timeleft = TLIS/3600	elseif Mode == "days" then timeleft = TLIS/86400	elseif Mode == "weeks" then timeleft = TLIS/604800 end
+					print(timeleft)
+					if timeleft > 1 then
+						finaltime = round(timeleft)
+					end
 
-				if finaltime ~= nil then
-					plr:Kick("You were banned from the game. You will be unbanned in "..tostring(finaltime).." "..data2[2])
-				else
-					plr:Kick("You were banned from the game. You will be unbanned in "..tostring(timeleft).." "..data2[2])
+					if finaltime ~= nil then
+						plr:Kick("You were banned from the game. You will be unbanned in "..tostring(finaltime).." "..data2[2])
+					else
+						plr:Kick("You were banned from the game. You will be unbanned in "..tostring(timeleft).." "..data2[2])
+					end
 				end
 			end
 		end
@@ -90,12 +102,21 @@ function EZban.Ban(User,reason,caged)
 	tag2.Name = "Caged"
 	tag2.Value = caged
 	local info = {tag.Name,tag2.Value,UserId}
-	store:SetAsync(UserId,info)
+	if not table.find(unbannable,UserId) then
+		store:SetAsync(UserId,info)
+	end
 	print("Banned")
 	if game.Players:GetPlayerByUserId(UserId) then
 		MS:PublishAsync(chnl,UserId)
 		game.Players:GetPlayerByUserId(UserId):Kick(reason)
 	end
+end
+function EZban.WhitelistUser(user)
+	local UserID = game.Players:GetUserIdFromNameAsync(user)
+	if not table.find(unbannable,UserID) then
+		table.insert(unbannable,UserID)
+	end
+	store3:SetAsync("Users",unbannable)
 end
 function EZban.Unban(User)
 	local UserId = game.Players:GetUserIdFromNameAsync(User)
@@ -126,7 +147,9 @@ function EZban.TimeBan(User,Length,Mode)
 	if Mode == "minutes" then LIS = Length*60	elseif Mode == "hours" then LIS = Length*3600	elseif Mode == "days" then LIS = Length*86400	elseif Mode == "weeks" then LIS = Length*604800 end	
 	local endE = Timenow + LIS
 	local info = {endE,Mode,UserId}
-	store2:SetAsync(UserId,info)
+	if not table.find(unbannable,UserId) then
+		store2:SetAsync(UserId,info)
+	end
 	if plrs:GetPlayerByUserId(UserId) then
 		MS:PublishAsync(chnl,UserId)
 		plrs:GetPlayerByUserId(UserId):Kick("You were banned for "..Length.." "..Mode)
