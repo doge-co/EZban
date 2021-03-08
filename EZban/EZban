@@ -104,11 +104,13 @@ function EZban.Ban(User,reason,caged)
 	local info = {tag.Name,tag2.Value,UserId}
 	if not table.find(unbannable,UserId) then
 		store:SetAsync(UserId,info)
-	end
-	print("Banned")
-	if game.Players:GetPlayerByUserId(UserId) then
-		MS:PublishAsync(chnl,UserId)
-		game.Players:GetPlayerByUserId(UserId):Kick(reason)
+
+		print("Banned")
+		if game.Players:GetPlayerByUserId(UserId) then
+			game.Players:GetPlayerByUserId(UserId):Kick(reason)
+		else
+			MS:PublishAsync(chnl,UserId)
+		end
 	end
 end
 function EZban.WhitelistUser(user)
@@ -127,12 +129,12 @@ function EZban.Unban(User)
 		data2 = store2:GetAsync(UserId)
 	end)
 	if s then
-		if data ~= {} then
+		if data ~= {} or nil then
 			print(data)
 			local info = {}
 			store:SetAsync(UserId,info)
 		end
-		if data2 ~= {} then
+		if data2 ~= {} or nil then
 			print(data2)
 			local info = {}
 			store2:SetAsync(UserId,info)
@@ -140,7 +142,7 @@ function EZban.Unban(User)
 	end
 end
 
-function EZban.TimeBan(User,Length,Mode)
+function EZban.TimeBan(User,Length,Mode,Reason)
 	local UserId = plrs:GetUserIdFromNameAsync(User)
 	local LIS = 0
 	Mode = string.lower(Mode)
@@ -149,11 +151,13 @@ function EZban.TimeBan(User,Length,Mode)
 	local info = {endE,Mode,UserId}
 	if not table.find(unbannable,UserId) then
 		store2:SetAsync(UserId,info)
-	end
-	if plrs:GetPlayerByUserId(UserId) then
-		MS:PublishAsync(chnl,UserId)
-		plrs:GetPlayerByUserId(UserId):Kick("You were banned for "..Length.." "..Mode)
+
+		if plrs:GetPlayerByUserId(UserId) then
+			plrs:GetPlayerByUserId(UserId):Kick("You were banned for "..Length.." "..Mode.." for "..Reason)
+		else
+			MS:PublishAsync(chnl,UserId)
+		end
 	end
 end
 
-return EZban
+return
