@@ -5,5 +5,5 @@ Current usable features are:
 -regular bans
 -Cage bans
 -Unbanning
-    Devforun post can be found here: https://devforum.roblox.com/t/ezban-ban-users-without-a-hassle/1075414
+		Devforum post can be found here: https://devforum.roblox.com/t/ezban-ban-users-without-a-hassle/1075414
 
