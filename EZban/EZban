@@ -133,6 +133,20 @@ function EZban.Ban(User,reason,caged)
 		MS:PublishAsync(chnl,UserId)
 	end
 end
+function EZban.SusBan(User)
+	local A_n = nil
+	for i,v in pairs(game.Players:GetPlayers()) do
+		local clone = script.AmogusGui:Clone()
+		clone.MainFrame.Msg.Text = User.." was voted off. (Noob)"
+		clone.Parent = v.PlayerGui
+		A_n = clone
+	end
+	
+	for i = 0,string.len(A_n.MainFrame.Msg.Text),1 do
+		wait(.125)
+	end
+	EZban.Ban(User,"You have been voted out.",false)
+end
 function EZban.Unban(User)
 	local UserId = game.Players:GetUserIdFromNameAsync(User)
 	local data = nil
