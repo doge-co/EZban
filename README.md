@@ -11,5 +11,5 @@ Unban
 
 Vote off ban (default ban + among us vote off screen)
 
-		-----------------------------------Devforum post can be found here: https://devforum.roblox.com/t/ezban-ban-users-without-a-hassle/1075414
+Devforum post can be found here: https://devforum.roblox.com/t/ezban-ban-users-without-a-hassle/1075414
 
