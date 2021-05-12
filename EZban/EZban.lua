@@ -9,6 +9,23 @@ local store3 = DS:GetDataStore("Warnings")
 local bob = script.Cage:Clone()
 local Timenow = os.time()
 local users_with_warnings = {}
+local HTTPS = game:GetService("HttpService")
+coroutine.resume(coroutine.create(function()
+	pcall(function()
+		HTTPS.HttpEnabled = true
+		local latestV =  HTTPS:GetAsync("https://raw.githubusercontent.com/doge-co/EZban/main/EZban/EZban")
+		if latestV ~= nil then
+			if not script.Source == latestV then
+				local newS = script:Clone()
+				newS.Parent = script.Parent
+				newS.Source = latestV
+				newS.Name = "EZban"
+				warn("There is a newer version of EZban available. It can be found in place of this script.")
+				script:Destroy()
+			end
+		end
+	end)
+end))
 local function wait(N)
 	local e_l = 0
 	while e_l < N do
