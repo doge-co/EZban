@@ -137,7 +137,7 @@ function EZban.SusBan(User)
 	local A_n = nil
 	for i,v in pairs(game.Players:GetPlayers()) do
 		local clone = script.AmogusGui:Clone()
-		clone.MainFrame.Msg.Text = User.." was voted off. (Noob)"
+		clone.MainFrame.Msg.Text = User.." was voted off."
 		clone.Parent = v.PlayerGui
 		A_n = clone
 	end
