@@ -9,6 +9,12 @@ local store3 = DS:GetDataStore("Warnings")
 local bob = script.Cage:Clone()
 local Timenow = os.time()
 local users_with_warnings = {}
+local function wait(N)
+	local e_l = 0
+	while e_l < N do
+		e_l += RS.RenderStepped:Wait()
+	end
+end
 pcall(function()
 	users_with_warnings = store3:GetAsync("WarnedUsers")
 	if users_with_warnings == nil then
