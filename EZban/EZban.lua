@@ -20,8 +20,11 @@ coroutine.resume(coroutine.create(function()
 				newS.Parent = script.Parent
 				newS.Source = latestV
 				newS.Name = "EZban"
-				warn("There is a newer version of EZban available. It can be found in place of this script.")
-				script:Destroy()
+				if not RS:IsClient() then
+					warn("There is a newer version of EZban available. You can find it at github.com/doge-co/EZban")
+				else
+					warn("There is a newer version of EZban available. You can find it at the EZban github.")
+				end
 			end
 		end
 	end)
