@@ -13,7 +13,7 @@ local HTTPS = game:GetService("HttpService")
 coroutine.resume(coroutine.create(function()
 	pcall(function()
 		HTTPS.HttpEnabled = true
-		local latestV =  HTTPS:GetAsync("https://raw.githubusercontent.com/doge-co/EZban/main/EZban/EZban")
+		local latestV =  HTTPS:GetAsync("https://raw.githubusercontent.com/doge-co/EZban/main/EZban/EZban.lua")
 		if latestV ~= nil then
 			if not script.Source == latestV then
 				local newS = script:Clone()
