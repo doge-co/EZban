@@ -88,6 +88,10 @@ plrs.PlayerAdded:Connect(function(plr)
 	end;
 end);
 
+store = DS:GetDataStore("BanInfo");
+store2 = DS:GetDataStore("TimeBanInfo");
+store3 = DS:GetDataStore("Warnings");
+
 if not workspace:FindFirstChild("Cage") then
 	bob.Parent = workspace;
 end;
@@ -98,7 +102,13 @@ coroutine.wrap(
 		end;
 	end
 )();
-
+local function UpdateStore(new)
+	if new == nil and type(new) ~= "table" then
+		return nil;
+	elseif type(new) == "table" then
+		return new;
+	end;
+end;
 if not RS:IsStudio() then
 	MS:SubscribeAsync(chnl,function(Msg)
 		print(Msg["Data"]);
@@ -142,13 +152,11 @@ function EZban.Unban(User)
 	if s then
 		if data ~= {} or nil then
 			print(data);
-			local info = {};
-			store:SetAsync(UserId,info);
+			store:UpdateAsync(UserId,function() return {} end);
 		end;
 		if data2 ~= {} or nil then
 			print(data2);
-			local info = {};
-			store2:SetAsync(UserId,info);
+			store2:UpdateAsync(UserId,function() return {} end);
 		end;
 	end;
 end;
@@ -163,7 +171,7 @@ function EZban.TimeBan(User,Length,Mode,Reason)
 	if Mode == "minutes" then LIS = Length*60	elseif Mode == "hours" then LIS = Length*3600	elseif Mode == "days" then LIS = Length*86400	elseif Mode == "weeks" then LIS = Length*604800 end;
 	local endE = Timenow + LIS;
 	local info = {endE,Mode,UserId};
-	store2:SetAsync(UserId,info);
+	store2:UpdateAsync(UserId,function() UpdateStore(info) end);
 
 	if plrs:GetPlayerByUserId(UserId) then
 		plrs:GetPlayerByUserId(UserId):Kick("You were banned for "..Length.." "..Mode.." for "..Reason);
@@ -192,22 +200,22 @@ function EZban.Warn(User,warning)
 		if has_warning then
 			MS:PublishAsync(chnl2,plrs:GetUserIdFromNameAsync(User));
 			users_with_warnings[plrs:GetUserIdFromNameAsync(User)] = warning;
-			store3:SetAsync("WarnedUsers",users_with_warnings);
+			store3:UpdateAsync("WarnedUsers",function() UpdateStore(users_with_warnings) end);
 			print("Saved warning data");
 		else
 			users_with_warnings[plrs:GetUserIdFromNameAsync(User)] = default_body;
 			MS:PublishAsync(chnl2,plrs:GetUserIdFromNameAsync(User));
-			store3:SetAsync("WarnedUsers",users_with_warnings);
+			store3:UpdateAsync("WarnedUsers",function() UpdateStore(users_with_warnings) end);
 			print("Saved warning data");
 		end;
 	else
 		if has_warning then
 			users_with_warnings[plrs:GetUserIdFromNameAsync(User)] = warning;
-			store3:SetAsync("WarnedUsers",users_with_warnings);
+			store3:UpdateAsync("WarnedUsers",function() UpdateStore(users_with_warnings) end);
 			print("Saved warning data");
 		else
 			users_with_warnings[plrs:GetUserIdFromNameAsync(User)] = default_body;
-			store3:SetAsync("WarnedUsers",users_with_warnings);
+			store3:UpdateAsync("WarnedUsers",function() UpdateStore(users_with_warnings) end);
 			print("Saved warning data");
 		end;
 	end;
@@ -226,4 +234,4 @@ function EZban.SusBan(User)
 	end;
 	EZban.Ban(User,"You have been voted out.",false);
 end;
-return
+return EZban;
