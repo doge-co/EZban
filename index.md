@@ -7,5 +7,5 @@
 `EZban.Warn(user : string , warning : string)`
 ## Time Ban:
 `Ezban.TimeBan(user : string , Length : number , mode : string, reason : string)`
-> Note that mode must be "minutes", "hours", "days", or "weeks"
+> Note that the sting mode must be "minutes", "hours", "days", or "weeks"
 
