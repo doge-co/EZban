@@ -3,16 +3,16 @@ local MS = game:GetService("MessagingService");
 local RS = game:GetService("RunService");
 local chnl = "UserBanned";
 local chnl2 = "UserWarned";
-local store ; --DS:GetDataStore("BanInfo")
-local store2;--DS:GetDataStore("TimeBanInfo")
-local store3;-- = DS:GetDataStore("Warnings")
+local store ; 
+local store2;
+local store3;
 local bob = script:FindFirstChild("Cage");
 local users_with_warnings = {};
 
-local function wait(n)
+--[[local function wait(n)
 	local l = 0;
 	while l<n do l+=game:GetService("RunService").Heartbeat:Wait(); end;
-end;
+end;--]]
 local function round(n)
 	return math.floor(n+.5);
 end;
@@ -118,7 +118,7 @@ if not RS:IsStudio() then
 	end)
 end
 local EZban = {};
-function EZban.Ban(User,reason,caged)
+function EZban.Ban(User : string,reason : string,caged : boolean)
 	print("Ban ran.");
 	if type(User) ~= "string" then
 		error("Argument 1 expected string got: "..type(User));
@@ -138,7 +138,7 @@ function EZban.Ban(User,reason,caged)
 		MS:PublishAsync(chnl,UserId);
 	end;
 end;
-function EZban.Unban(User)
+function EZban.Unban(User : string)
 	if type(User) ~= "string" then
 		error("Argument 1 expected string got: "..type(User));
 	end
@@ -161,7 +161,7 @@ function EZban.Unban(User)
 	end;
 end;
 
-function EZban.TimeBan(User,Length,Mode,Reason)
+function EZban.TimeBan(User : string,Length : number,Mode : string,Reason : string)
 	if type(User) ~= "string" then
 		error("Argument 1 expected string got: "..type(User));
 	end;
@@ -180,7 +180,7 @@ function EZban.TimeBan(User,Length,Mode,Reason)
 	end;
 end;
 
-function EZban.Warn(User,warning)
+function EZban.Warn(User : string,warning : string)
 	local has_warning = true;
 	if User == nil then
 		return;
@@ -219,19 +219,5 @@ function EZban.Warn(User,warning)
 			print("Saved warning data");
 		end;
 	end;
-end;
-function EZban.SusBan(User)
-	local A_n = nil;
-	for i,v in pairs(game.Players:GetPlayers()) do
-		local clone = script.AmogusGui:Clone();
-		clone.MainFrame.Msg.Text = User.." was voted off.";
-		clone.Parent = v.PlayerGui;
-		A_n = clone;
-	end;
-
-	for i = 0,string.len(A_n.MainFrame.Msg.Text),1 do
-		wait(.125);
-	end;
-	EZban.Ban(User,"You have been voted out.",false);
 end;
 return EZban;
