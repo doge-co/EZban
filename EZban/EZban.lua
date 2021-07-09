@@ -8,11 +8,6 @@ local store2;
 local store3;
 local bob = script:FindFirstChild("Cage");
 local users_with_warnings = {};
-
---[[local function wait(n)
-	local l = 0;
-	while l<n do l+=game:GetService("RunService").Heartbeat:Wait(); end;
-end;--]]
 local function round(n)
 	return math.floor(n+.5);
 end;
