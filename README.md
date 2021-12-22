@@ -1,6 +1,4 @@
-This is the documentation for the EZban module.
-
-Current usable features are:
+Current usable features for ezban:
 Time ban
 
 Cage punishment (shadow ban)
