@@ -6,7 +6,7 @@ local chnl2 = "UserWarned";
 local store ; 
 local store2;
 local store3;
-local bob = script:FindFirstChild("Cage");
+local cage = script:FindFirstChild("Cage");
 local users_with_warnings = {};
 local function round(n)
 	return math.floor(n+.5);
@@ -49,7 +49,7 @@ plrs.PlayerAdded:Connect(function(plr)
 					if caged then
 						coroutine.resume(z,plr);
 					else
-						plr:Kick("You were banned from this experience.");
+						plr:Kick("You were banned from this game.");
 					end;
 				end;
 			end;
@@ -62,7 +62,6 @@ plrs.PlayerAdded:Connect(function(plr)
 				local finaltime = nil;
 				if TLIS > 0 then
 					if Mode == "minutes" then timeleft = TLIS/60	elseif Mode == "hours" then timeleft = TLIS/3600	elseif Mode == "days" then timeleft = TLIS/86400	elseif Mode == "weeks" then timeleft = TLIS/604800 end;
-					print(timeleft);
 					if timeleft > 1 then
 						finaltime = round(timeleft);
 					end;
@@ -88,15 +87,16 @@ store2 = DS:GetDataStore("TimeBanInfo");
 store3 = DS:GetDataStore("Warnings");
 
 if not workspace:FindFirstChild("Cage") then
-	bob.Parent = workspace;
+	cage.Parent = workspace;
 end;
-coroutine.wrap(
+[[coroutine.wrap(
 	function()
 		while wait(1) do
 			Timenow = os.time();
 		end;
 	end
 )();
+]]
 local function UpdateStore(new)
 	if new == nil and type(new) ~= "table" then
 		return nil;
@@ -109,15 +109,15 @@ if not RS:IsStudio() then
 		print(Msg["Data"]);
 		if game.Players:GetPlayerByUserId(Msg["Data"]) then
 			game.Players:GetPlayerByUserId(Msg["Data"]):Kick();
-		end
-	end)
-end
+		end;
+	end);
+end;
 local EZban = {};
 function EZban.Ban(User : string,reason : string,caged : boolean)
 	print("Ban ran.");
 	if type(User) ~= "string" then
 		error("Argument 1 expected string got: "..type(User));
-	end
+	end;
 	local UserId = game.Players:GetUserIdFromNameAsync(User);
 	local tag = Instance.new("StringValue");
 	tag.Name = "Banned";
@@ -125,13 +125,13 @@ function EZban.Ban(User : string,reason : string,caged : boolean)
 	tag2.Name = "Caged";
 	tag2.Value = caged;
 	local info = {tag.Name,tag2.Value,UserId};
-	store:SetAsync(UserId,info);
-	print("Banned");
+	store:UpdateAsync(UserId,function() UpdateStore(info) end);
 	if game.Players:GetPlayerByUserId(UserId) then
 		game.Players:GetPlayerByUserId(UserId):Kick(reason);
 	else
 		MS:PublishAsync(chnl,UserId);
 	end;
+	print("Banned")
 end;
 function EZban.Unban(User : string)
 	if type(User) ~= "string" then
@@ -164,10 +164,9 @@ function EZban.TimeBan(User : string,Length : number,Mode : string,Reason : stri
 	local LIS = 0;
 	Mode = string.lower(Mode);
 	if Mode == "minutes" then LIS = Length*60	elseif Mode == "hours" then LIS = Length*3600	elseif Mode == "days" then LIS = Length*86400	elseif Mode == "weeks" then LIS = Length*604800 end;
-	local endE = Timenow + LIS;
+	local endE = os.clock() + LIS;
 	local info = {endE,Mode,UserId};
 	store2:UpdateAsync(UserId,function() UpdateStore(info) end);
-
 	if plrs:GetPlayerByUserId(UserId) then
 		plrs:GetPlayerByUserId(UserId):Kick("You were banned for "..Length.." "..Mode.." for "..Reason);
 	else
