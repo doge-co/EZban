@@ -98,9 +98,9 @@ end;
 )();
 ]]
 local function UpdateStore(new)
-	if new == nil and type(new) ~= "table" then
+	if type(new) ~= "table" then
 		return nil;
-	elseif type(new) == "table" then
+	else
 		return new;
 	end;
 end;
@@ -114,17 +114,12 @@ if not RS:IsStudio() then
 end;
 local EZban = {};
 function EZban.Ban(User : string,reason : string,caged : boolean)
-	print("Ban ran.");
+	print("Ban ran");
 	if type(User) ~= "string" then
 		error("Argument 1 expected string got: "..type(User));
 	end;
 	local UserId = game.Players:GetUserIdFromNameAsync(User);
-	local tag = Instance.new("StringValue");
-	tag.Name = "Banned";
-	local tag2 = Instance.new("BoolValue");
-	tag2.Name = "Caged";
-	tag2.Value = caged;
-	local info = {tag.Name,tag2.Value,UserId};
+	local info = {"Banned",caged,UserId};
 	store:UpdateAsync(UserId,function() UpdateStore(info) end);
 	if game.Players:GetPlayerByUserId(UserId) then
 		game.Players:GetPlayerByUserId(UserId):Kick(reason);
@@ -179,7 +174,7 @@ function EZban.Warn(User : string,warning : string)
 	if User == nil then
 		return;
 	end;
-	local default_body = "A game administrator has sent you a warning for current user activities. If such activities continue, you may be banned from the game.";
+	local default_body = "An administrator has sent you a warning for current user activities. If such activities continue, you will be banned from the game.";
 
 	local W_Clone = script.WarnGui:Clone();
 	if warning == nil then
